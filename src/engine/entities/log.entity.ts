@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('logs')
+@Entity( "logs")
 export class LogEntity{
   @PrimaryGeneratedColumn('rowid')
   id:number

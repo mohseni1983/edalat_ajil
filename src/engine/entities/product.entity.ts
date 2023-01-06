@@ -1,25 +1,23 @@
 import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('products')
+@Entity( "products")
 export class ProductEntity{
-  @PrimaryGeneratedColumn('rowid')
-  id:number
-  @Column({unique:true})
+  @Column({unique:true,primary:true,})
   GoodCode:number
-  @Column()
+  @Column({nullable:true})
   GoodName:string
-  @Column()
+  @Column({nullable:true})
   SellPrice:number
-  @Column()
+  @Column({nullable:true})
   UnitDescription:string
-  @Column()
+  @Column({nullable:true})
   Mojodi:number
-  @Column()
+  @Column({nullable:true})
   BarCode:string
-  @Column()
+  @Column({nullable:true})
   Discount:number
   @Column({type:'boolean',default:true})
   mojod:boolean
-  @Column({type:'datetime'})
+  @UpdateDateColumn({type:'datetime',nullable:true})
   LastUpdate:Date
 }

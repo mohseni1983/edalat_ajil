@@ -1,12 +1,10 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({name:'products',synchronize:false})
+@Entity('products')
 export class WebsiteProductEntity{
-  @PrimaryGeneratedColumn('rowid')
-  id:number
   @Column()
   name:string
-  @Column()
+  @Column({primary:true,unique:true})
   code:string
   @Column()
   retailPrice:number
@@ -18,4 +16,14 @@ export class WebsiteProductEntity{
   statusId:number
   @Column()
   off:number
+  @Column({default:2})
+  product_category_id:number
+  @Column({default:'[5]'})
+  tag_Ids:string
+  @Column({default:'کیلو'})
+  product_weight:string
+  @Column({default:''})
+  about:string
+  @Column({type:'datetime'})
+  date:Date
 }

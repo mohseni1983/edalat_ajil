@@ -1,7 +1,7 @@
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from "@nestjs/typeorm";
 import { Injectable } from "@nestjs/common";
-import { ProductEntity } from "../entities/product.entity";
-import { LogEntity } from "../entities/log.entity";
+import { ProductEntity } from "../../engine/entities/product.entity";
+import { LogEntity } from "../../engine/entities/log.entity";
 
 @Injectable()
 export class SqliteConfigService implements TypeOrmOptionsFactory{
