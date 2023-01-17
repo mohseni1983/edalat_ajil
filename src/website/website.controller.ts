@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { FindProductDto } from "src/engine/dto/find-product.dto";
 import { WebsiteService } from "./website.service";
 
 @Controller('website')
@@ -11,6 +12,11 @@ export class WebsiteController{
   @Get('all')
   async getAllProducts(){
     return await this.websiteService.getAllAryaProducts()
+  }
+
+  @Post('product/find')
+  async findProduct(@Body() findDto:FindProductDto){
+    return await this.websiteService.findWebsiteProduct(findDto)
   }
 
   @Delete('delete/all')

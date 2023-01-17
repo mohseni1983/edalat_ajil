@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { WebsiteProductEntity } from "./entities/website-product.entity";
 import { ILike, Repository } from "typeorm";
 import { Cron, CronExpression } from "@nestjs/schedule";
+import { FindProductDto } from 'src/engine/dto/find-product.dto';
 
 @Injectable()
 export class WebsiteService {
@@ -22,9 +23,10 @@ export class WebsiteService {
     const product=await this.websiteProductsRepo.findOne({where:{code:productCode}})
     if(!product)
       return false
-    product.retailPrice=newPrice/10
-    product.wholesalePrice=newPrice/10
+    product.retailPrice=newPrice
+    product.wholesalePrice=newPrice
     await this.websiteProductsRepo.save(product);
+    console.log(product.code,product.name,product.retailPrice)
     return true
   }
 
@@ -57,6 +59,10 @@ export class WebsiteService {
 
   async deleteAllAryaProducts(){
     return await this.websiteProductsRepo.delete({code:ILike('14011%')});
+  }
+
+  async findWebsiteProduct(findDto:FindProductDto){
+    return await this.websiteProductsRepo.find({where:{name: ILike(`%${findDto.productName}%`)}})
   }
 
 

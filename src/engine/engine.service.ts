@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { AryaService } from "../arya/arya.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ProductEntity } from "./entities/product.entity";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { WebsiteService } from "../website/website.service";
 import { Cron, CronExpression } from "@nestjs/schedule";
+import { FindProductDto } from './dto/find-product.dto';
 
 @Injectable()
 export class EngineService {
@@ -42,8 +43,8 @@ export class EngineService {
       {
         statusId: item.Mojodi>0?1:3,
         code: `140111${item.GoodCode}`,
-        wholesalePrice: item.SellPrice,
-        retailPrice: item.SellPrice,
+        wholesalePrice: Number(item.SellPrice)/10,
+        retailPrice: Number(item.SellPrice)/10,
         off: item.Discount,
         name: item.GoodName,
         quantity: item.Mojodi,
@@ -61,10 +62,12 @@ export class EngineService {
   async updateProduct(item:any,product:ProductEntity){
     let updatePriceToSite=false;
     let updateMojodiToSite=false;
-    if(product.SellPrice!=item.SellPrice) {
+    if(product.SellPrice!==item.SellPrice/10) {
+      //console.log('Start updating prices')
+      //console.log('Price changed for : ',item.GoodCode)
        updatePriceToSite = await this.websiteService.findProductAndUpdatePrice(
         `140111${product.GoodCode}`,
-        item.SellPrice / 10
+        Number(item.SellPrice) / 10
       )
     }
     if(item.Mojodi!=product.Mojodi) {
@@ -73,7 +76,7 @@ export class EngineService {
         item.Mojodi > 0
       )
     }
-    product.SellPrice=item.SellPrice
+    product.SellPrice=Number(item.SellPrice)/10
     product.Discount=item.Discount
     item.Mojodi>0?product.mojod=true:product.mojod=false;
     product.Mojodi=item.Mojodi
@@ -84,7 +87,22 @@ export class EngineService {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   executeSync(){
-    this.manageProducts()
+    this.manageProducts().then(()=>{
+      console.log('Synced at '+ new Date())
+    })
+  }
+
+  async getAllProducts(){
+    return await this.productRepo.find()
+  }
+
+  async findProductByTitle(findDto:FindProductDto){
+    return await this.productRepo.find({where:{GoodName: ILike(`%${findDto.productName}%`)}})
+
+  }
+
+  async getAllWebsiteProducts(){
+    return await this.websiteService.getAllAryaProducts()
   }
 
 
