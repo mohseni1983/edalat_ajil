@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { WebsiteProductEntity } from "./entities/website-product.entity";
 import { ILike, Repository } from "typeorm";
 import { Cron, CronExpression } from "@nestjs/schedule";
+import { FindProductDto } from 'src/engine/dto/find-product.dto';
 
 @Injectable()
 export class WebsiteService {
@@ -22,9 +23,11 @@ export class WebsiteService {
     const product=await this.websiteProductsRepo.findOne({where:{code:productCode}})
     if(!product)
       return false
-    product.retailPrice=newPrice/10
-    product.wholesalePrice=newPrice/10
+    const prePrice=product.retailPrice
+    product.retailPrice=newPrice
+    product.wholesalePrice=newPrice
     await this.websiteProductsRepo.save(product);
+    console.log('UPDATE PRICE >> ',product.code,product.name,prePrice,product.retailPrice)
     return true
   }
 
@@ -32,8 +35,10 @@ export class WebsiteService {
     const product=await this.websiteProductsRepo.findOne({where:{code:productCode}})
     if(!product)
       return false
+    const preMovjoodi=product.statusId
     mojod?product.statusId=1:product.statusId=3
     await this.websiteProductsRepo.save(product);
+    console.log('UPDATE MOVJOODI >> ',product.code,product.name,preMovjoodi,product.statusId)
     return true;
   }
 
@@ -57,6 +62,22 @@ export class WebsiteService {
 
   async deleteAllAryaProducts(){
     return await this.websiteProductsRepo.delete({code:ILike('14011%')});
+  }
+
+  async findWebsiteProduct(findDto:FindProductDto){
+    return await this.websiteProductsRepo.find({where:{name: ILike(`%${findDto.productName}%`)}})
+  }
+
+  async grabZeroFromProducts(){
+    const result=await this.websiteProductsRepo.find({where:{code: ILike('14011%')}})
+    for(let product of result){
+      const price=product.retailPrice
+      product.retailPrice=product.retailPrice/10
+      product.wholesalePrice=product.wholesalePrice/10
+      await this.websiteProductsRepo.save(product)
+      console.log(product.name,price,product.retailPrice,product.wholesalePrice)
+    }
+
   }
 
 

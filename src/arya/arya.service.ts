@@ -1,3 +1,4 @@
+import { AryaProductsDto } from './dto/arya-product.dto';
 import { Inject, Injectable } from "@nestjs/common";
 import { SoapService } from "nestjs-soap/dist/soap.service";
 import { Client } from "nestjs-soap";
@@ -18,8 +19,8 @@ export class AryaService {
 */
   }
 
-   getProducts(token:string){
-      return  new Promise((resolve, reject)=>{
+   getProducts(token:string):Promise<AryaProductsDto[]>{
+      return  new Promise<AryaProductsDto[]>((resolve, reject)=>{
         this.client.GetGoodInfo({credentials:token},(error,result)=>{
           if(error) {
             reject(error);
